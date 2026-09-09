@@ -1,767 +1,94 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Surplus AI Studio</title>
-
-  <style>
-    :root { color-scheme: dark; }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
-      background: #0b0d10;
-      color: #f4f7fb;
-      min-height: 100vh;
-    }
-
-    .wrap {
-      max-width: 1040px;
-      margin: 0 auto;
-      padding: 36px 20px 80px;
-    }
-
-    h1 { margin: 0; font-size: 30px; }
-
-    .sub {
-      color: #97a3b1;
-      margin-top: 6px;
-      font-size: 14px;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin: 26px 0 16px;
-      background: #101419;
-      border: 1px solid #252b33;
-      padding: 6px;
-      border-radius: 14px;
-    }
-
-    .tab {
-      width: auto;
-      flex: 1;
-      padding: 12px 16px;
-      border-radius: 10px;
-      background: transparent;
-      color: #aeb8c6;
-      font-weight: 700;
-      cursor: pointer;
-      border: 0;
-    }
-
-    .tab.active {
-      background: #f4f7fb;
-      color: #0b0d10;
-    }
-
-    .panel { display: none; }
-    .panel.active { display: block; }
-
-    .card {
-      background: #12161b;
-      border: 1px solid #252b33;
-      border-radius: 18px;
-      padding: 22px;
-    }
-
-    label {
-      display: block;
-      font-size: 13px;
-      color: #aeb8c6;
-      margin-bottom: 7px;
-    }
-
-    input,
-    textarea,
-    select,
-    button {
-      width: 100%;
-      border-radius: 11px;
-      border: 1px solid #303944;
-      background: #0d1116;
-      color: #f7f9fb;
-      padding: 12px 13px;
-      font: inherit;
-    }
-
-    textarea {
-      min-height: 145px;
-      resize: vertical;
-      line-height: 1.5;
-    }
-
-    input[type=file] {
-      padding: 18px;
-      border-style: dashed;
-    }
-
-    button { cursor: pointer; }
-    button:disabled { opacity: .45; cursor: not-allowed; }
-
-    .primary {
-      margin-top: 20px;
-      background: #f4f7fb;
-      color: #0b0d10;
-      font-weight: 800;
-      border: 0;
-    }
-
-    .grid2 {
-      display: grid;
-      grid-template-columns: repeat(2,minmax(0,1fr));
-      gap: 16px;
-      margin-top: 16px;
-    }
-
-    .small {
-      color: #93a0af;
-      font-size: 13px;
-    }
-
-    .status {
-      display: none;
-      margin-top: 20px;
-      border: 1px solid #28303a;
-      border-radius: 12px;
-      padding: 14px;
-      background: #0d1116;
-    }
-
-    .status.show { display: block; }
-
-    .error {
-      color: #ff9e9e;
-      white-space: pre-wrap;
-      margin-top: 10px;
-    }
-
-    .control-block { margin-top: 18px; }
-
-    .button-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .choice {
-      width: auto;
-      padding: 10px 14px;
-      background: #0d1116;
-      color: #cbd3dc;
-      border: 1px solid #303944;
-      font-weight: 650;
-    }
-
-    .choice.active {
-      background: #f4f7fb;
-      color: #0b0d10;
-      border-color: #f4f7fb;
-    }
-
-    .reference-preview {
-      display: grid;
-      grid-template-columns: repeat(auto-fill,minmax(135px,1fr));
-      gap: 12px;
-      margin-top: 14px;
-    }
-
-    .thumb {
-      position: relative;
-      border: 1px solid #2b333d;
-      border-radius: 12px;
-      overflow: hidden;
-      background: #0d1116;
-      aspect-ratio: 16/10;
-    }
-
-    .thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .thumb button {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      width: 28px;
-      height: 28px;
-      padding: 0;
-      border: 0;
-      border-radius: 50%;
-      background: rgba(0,0,0,.72);
-    }
-
-    .video-preview,
-    .result-image {
-      width: 100%;
-      border-radius: 14px;
-      margin-top: 18px;
-      background: #000;
-    }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .actions button,
-    .actions a {
-      width: auto;
-      padding: 10px 14px;
-      border-radius: 10px;
-      background: #252d37;
-      color: white;
-      text-decoration: none;
-      border: 0;
-    }
-
-    .model-note {
-      margin-top: 8px;
-      color: #93a0af;
-      font-size: 12px;
-    }
-
-    @media (max-width:720px) {
-      .grid2 { grid-template-columns: 1fr; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Surplus AI Studio</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:#0b0d10;color:#f4f7fb}.wrap{max-width:1040px;margin:auto;padding:36px 20px 80px}h1{margin:0;font-size:30px}.sub,.small{color:#93a0af}.tabs{display:flex;gap:8px;margin:26px 0 16px;background:#101419;border:1px solid #252b33;padding:6px;border-radius:14px}.tab{flex:1;border:0;background:transparent;color:#aeb8c6;font-weight:750}.tab.active,.primary,.choice.active{background:#f4f7fb;color:#0b0d10}.panel{display:none}.panel.active{display:block}.card{background:#12161b;border:1px solid #252b33;border-radius:18px;padding:22px}label{display:block;font-size:13px;color:#aeb8c6;margin:0 0 7px}input,textarea,select,button{width:100%;border-radius:11px;border:1px solid #303944;background:#0d1116;color:#f7f9fb;padding:12px 13px;font:inherit}textarea{min-height:145px;resize:vertical}input[type=file]{padding:18px;border-style:dashed}.primary{margin-top:20px;font-weight:800;border:0}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.control{margin-top:18px}.row{display:flex;gap:8px;flex-wrap:wrap}.choice{width:auto;font-weight:700}.status{display:none;margin-top:20px;border:1px solid #28303a;border-radius:12px;padding:14px;background:#0d1116}.status.show{display:block}.error{color:#ff9e9e;margin-top:10px;white-space:pre-wrap}.previews{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:12px;margin-top:14px}.thumb{position:relative;aspect-ratio:16/10;border:1px solid #2b333d;border-radius:12px;overflow:hidden}.thumb img{width:100%;height:100%;object-fit:cover}.thumb button{position:absolute;top:6px;right:6px;width:28px;height:28px;padding:0;border:0;border-radius:50%;background:#000c}.result,.video{width:100%;margin-top:18px;border-radius:14px}.actions{margin-top:12px}.actions button{width:auto;background:#252d37}@media(max-width:720px){.grid2{grid-template-columns:1fr}}
+</style>
 </head>
-
 <body>
 <div class="wrap">
+<h1>Surplus AI Studio</h1>
+<div class="sub">Private image and video generation interface</div>
 
-  <h1>Surplus AI Studio</h1>
-  <div class="sub">Private image and video generation interface</div>
+<div class="tabs">
+<button class="tab active" data-tab="videoPanel">Video Generation</button>
+<button class="tab" data-tab="imagePanel">Image Generation</button>
+</div>
 
-  <div class="tabs">
-    <button class="tab active" data-tab="videoPanel">Video Generation</button>
-    <button class="tab" data-tab="imagePanel">Image Generation</button>
-  </div>
+<section id="videoPanel" class="panel active"><div class="card">
+<form id="videoForm">
+<label>Reference image</label><input name="image" type="file" accept="image/*" required>
+<div class="grid2">
+<div><label>Prompt</label><textarea name="prompt" required></textarea></div>
+<div><label>Model ID</label><input id="videoModel" name="model" value="veo3-fast-image-to-video"></div>
+</div>
+<div class="control"><label>Aspect ratio</label><select name="aspect_ratio"><option>16:9</option><option>9:16</option><option>1:1</option></select></div>
+<button id="videoGenerate" class="primary">Generate Video</button>
+</form>
+<div id="videoStatus" class="status"><strong id="videoStatusText"></strong><div id="videoDetail" class="small"></div><div id="videoError" class="error"></div></div>
+<div id="videoResult"></div>
+</div></section>
 
-  <!-- VIDEO -->
-  <section id="videoPanel" class="panel active">
-    <div class="card">
+<section id="imagePanel" class="panel"><div class="card">
+<form id="imageForm">
+<label>Model</label>
+<select id="imageModel">
+  <option value="nano-banana-2-edit" selected>Nano Banana 2 Edit</option>
+  <option value="nano-banana-pro-edit">Nano Banana Pro Edit</option>
+</select>
+<div class="small" style="margin-top:7px">Only the two edit models are available.</div>
 
-      <form id="videoForm">
-        <label>Reference image</label>
-        <input name="image" type="file" accept="image/*" required />
+<div class="control">
+<label>Reference images (1–8)</label>
+<input id="referenceInput" type="file" accept="image/*" multiple>
+<div class="small" style="margin-top:7px">All uploaded images are sent as references. Up to 8.</div>
+<div id="referencePreview" class="previews"></div>
+</div>
 
-        <div class="grid2">
-          <div>
-            <label>Prompt</label>
-            <textarea
-              name="prompt"
-              placeholder="Describe the video..."
-              required
-            ></textarea>
-          </div>
+<div class="control"><label>Prompt</label><textarea id="imagePrompt" required></textarea></div>
 
-          <div>
-            <label>Model ID</label>
-            <input
-              id="videoModel"
-              name="model"
-              value="veo3-fast-image-to-video"
-            />
-          </div>
-        </div>
+<div class="control">
+<label>Aspect ratio</label>
+<div class="row"><button type="button" class="choice active">16:9</button><button type="button" class="choice">9:16</button><button type="button" class="choice">1:1</button><button type="button" class="choice">4:3</button><button type="button" class="choice">3:4</button></div>
+<div class="small" style="margin-top:7px">Display preference only for now; not sent to Surplus.</div>
+</div>
 
-        <div class="control-block">
-          <label>Aspect ratio</label>
-          <select name="aspect_ratio">
-            <option value="16:9">16:9</option>
-            <option value="9:16">9:16</option>
-            <option value="1:1">1:1</option>
-          </select>
-        </div>
+<div class="control">
+<label>Resolution</label>
+<div id="resolutionButtons" class="row"><button type="button" class="choice" data-value="1K">1K</button><button type="button" class="choice active" data-value="2K">2K</button><button type="button" class="choice" data-value="4K">4K</button></div>
+<input id="imageResolution" type="hidden" value="2K">
+</div>
 
-        <button
-          id="videoGenerate"
-          class="primary"
-          type="submit"
-        >
-          Generate Video
-        </button>
-      </form>
-
-      <div id="videoStatus" class="status">
-        <strong id="videoStatusText"></strong>
-        <div id="videoDetail" class="small"></div>
-        <div id="videoError" class="error"></div>
-      </div>
-
-      <div id="videoResult"></div>
-    </div>
-  </section>
-
-  <!-- IMAGE -->
-  <section id="imagePanel" class="panel">
-    <div class="card">
-
-      <form id="imageForm">
-
-        <label>Model</label>
-
-        <select id="imageModel" name="model">
-          <option value="">Loading active Nano Banana models...</option>
-        </select>
-
-        <div id="modelNote" class="model-note">
-          Loading active marketplace model IDs from Surplus...
-        </div>
-
-        <div class="control-block">
-          <label>Reference images (optional, up to 8)</label>
-
-          <input
-            id="referenceInput"
-            type="file"
-            accept="image/*"
-            multiple
-          />
-
-          <div class="small" style="margin-top:7px">
-            Select as many reference images as needed, up to 8.
-          </div>
-
-          <div
-            id="referencePreview"
-            class="reference-preview"
-          ></div>
-        </div>
-
-        <div class="control-block">
-          <label>Prompt</label>
-
-          <textarea
-            id="imagePrompt"
-            placeholder="Describe the thumbnail or image edit..."
-            required
-          ></textarea>
-        </div>
-
-        <div class="control-block">
-          <label>Aspect ratio</label>
-
-          <div id="aspectButtons" class="button-row">
-            <button type="button" class="choice active">16:9</button>
-            <button type="button" class="choice">9:16</button>
-            <button type="button" class="choice">1:1</button>
-            <button type="button" class="choice">4:3</button>
-            <button type="button" class="choice">3:4</button>
-          </div>
-
-          <div class="small" style="margin-top:7px">
-            Kept as a UI preference for now; it is not sent until the live Nano Banana parameter contract is confirmed.
-          </div>
-        </div>
-
-        <div class="control-block">
-          <label>Resolution</label>
-
-          <div id="resolutionButtons" class="button-row">
-            <button type="button" class="choice" data-value="1K">1K</button>
-            <button type="button" class="choice active" data-value="2K">2K</button>
-            <button type="button" class="choice" data-value="4K">4K</button>
-          </div>
-
-          <input
-            type="hidden"
-            id="imageResolution"
-            value="2K"
-          />
-        </div>
-
-        <div class="control-block">
-          <label>Output format</label>
-          <div class="button-row">
-            <button type="button" class="choice active">JPG</button>
-          </div>
-        </div>
-
-        <button
-          id="imageGenerate"
-          class="primary"
-          type="submit"
-        >
-          Generate Image
-        </button>
-      </form>
-
-      <div id="imageStatus" class="status">
-        <strong id="imageStatusText"></strong>
-        <div id="imageDetail" class="small"></div>
-        <div id="imageError" class="error"></div>
-      </div>
-
-      <div id="imageResult"></div>
-    </div>
-  </section>
-
+<div class="control"><label>Output format</label><div class="row"><button type="button" class="choice active">JPG</button></div></div>
+<button id="imageGenerate" class="primary">Generate Image</button>
+</form>
+<div id="imageStatus" class="status"><strong id="imageStatusText"></strong><div id="imageDetail" class="small"></div><div id="imageError" class="error"></div></div>
+<div id="imageResult"></div>
+</div></section>
 </div>
 
 <script>
-  document.querySelectorAll(".tab").forEach(tab => {
-    tab.onclick = () => {
-      document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
-      document.querySelectorAll(".panel").forEach(x => x.classList.remove("active"));
-
-      tab.classList.add("active");
-      document.getElementById(tab.dataset.tab).classList.add("active");
-    };
-  });
-
-  fetch("/api/config")
-    .then(r => r.json())
-    .then(data => {
-      if (data.defaultVideoModel) {
-        document.getElementById("videoModel").value = data.defaultVideoModel;
-      }
-    });
-
-  // -------- LIVE IMAGE MODELS --------
-
-  const imageModel = document.getElementById("imageModel");
-  const modelNote = document.getElementById("modelNote");
-
-  fetch("/api/image-models")
-    .then(r => r.json())
-    .then(data => {
-      if (data.error) throw new Error(data.error);
-
-      imageModel.innerHTML = "";
-
-      if (!data.models?.length) {
-        imageModel.innerHTML =
-          '<option value="">No live Nano Banana models found</option>';
-
-        modelNote.textContent =
-          "Surplus /api/markets currently returned no active Nano Banana offers.";
-
-        return;
-      }
-
-      data.models.forEach(model => {
-        const option = document.createElement("option");
-
-        option.value = model.id;
-        option.textContent = model.label;
-
-        imageModel.appendChild(option);
-      });
-
-      modelNote.textContent =
-        `${data.models.length} active Nano Banana marketplace model ID(s) loaded from Surplus.`;
-    })
-    .catch(err => {
-      imageModel.innerHTML =
-        '<option value="">Unable to load models</option>';
-
-      modelNote.textContent = err.message;
-    });
-
-  // -------- REFERENCES --------
-
-  const referenceInput = document.getElementById("referenceInput");
-  const referencePreview = document.getElementById("referencePreview");
-
-  let referenceFiles = [];
-
-  function renderReferences() {
-    referencePreview.innerHTML = "";
-
-    referenceFiles.forEach((file, index) => {
-      const box = document.createElement("div");
-      box.className = "thumb";
-
-      const img = document.createElement("img");
-      img.src = URL.createObjectURL(file);
-
-      const remove = document.createElement("button");
-      remove.type = "button";
-      remove.textContent = "×";
-
-      remove.onclick = () => {
-        referenceFiles.splice(index, 1);
-        renderReferences();
-      };
-
-      box.append(img, remove);
-      referencePreview.appendChild(box);
-    });
-  }
-
-  referenceInput.onchange = () => {
-    referenceFiles = [
-      ...referenceFiles,
-      ...Array.from(referenceInput.files || [])
-    ].slice(0, 8);
-
-    referenceInput.value = "";
-    renderReferences();
-  };
-
-  // -------- RESOLUTION --------
-
-  document
-    .querySelectorAll("#resolutionButtons .choice")
-    .forEach(button => {
-      button.onclick = () => {
-        document
-          .querySelectorAll("#resolutionButtons .choice")
-          .forEach(x => x.classList.remove("active"));
-
-        button.classList.add("active");
-
-        document.getElementById("imageResolution").value =
-          button.dataset.value;
-      };
-    });
-
-  // -------- VIDEO --------
-
-  const videoForm = document.getElementById("videoForm");
-  const videoStatus = document.getElementById("videoStatus");
-  const videoStatusText = document.getElementById("videoStatusText");
-  const videoDetail = document.getElementById("videoDetail");
-  const videoError = document.getElementById("videoError");
-  const videoResult = document.getElementById("videoResult");
-
-  function showVideo(text, detail = "") {
-    videoStatus.classList.add("show");
-    videoStatusText.textContent = text;
-    videoDetail.textContent = detail;
-    videoError.textContent = "";
-  }
-
-  async function pollVideo(id) {
-    while (true) {
-      const response = await fetch(`/api/status/${encodeURIComponent(id)}`);
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Status request failed.");
-      }
-
-      showVideo(
-        `Status: ${data.status || "unknown"}`,
-        `Job ID: ${id}`
-      );
-
-      if (data.status === "succeeded") {
-        return data;
-      }
-
-      if (["failed", "canceled", "expired"].includes(data.status)) {
-        throw new Error(
-          data.error?.message || `Generation ${data.status}.`
-        );
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 4000));
-    }
-  }
-
-  videoForm.onsubmit = async event => {
-    event.preventDefault();
-
-    const button = document.getElementById("videoGenerate");
-
-    button.disabled = true;
-    videoResult.innerHTML = "";
-
-    showVideo("Submitting generation...");
-
-    try {
-      const response = await fetch("/api/generate", {
-        method: "POST",
-        body: new FormData(videoForm)
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Generation failed.");
-      }
-
-      const finished = await pollVideo(data.id);
-
-      const artifact = finished.results?.[0];
-
-      const src =
-        artifact?.url ||
-        artifact?.download_url;
-
-      if (!src) {
-        throw new Error("No video artifact returned.");
-      }
-
-      videoResult.innerHTML = `
-        <video
-          class="video-preview"
-          controls
-          src="${src}"
-        ></video>
-      `;
-
-      showVideo("Completed", `Job ID: ${data.id}`);
-    } catch (err) {
-      videoStatus.classList.add("show");
-      videoStatusText.textContent = "Generation failed";
-      videoError.textContent = err.message;
-    } finally {
-      button.disabled = false;
-    }
-  };
-
-  // -------- IMAGE --------
-
-  const imageForm = document.getElementById("imageForm");
-  const imageStatus = document.getElementById("imageStatus");
-  const imageStatusText = document.getElementById("imageStatusText");
-  const imageDetail = document.getElementById("imageDetail");
-  const imageError = document.getElementById("imageError");
-  const imageResult = document.getElementById("imageResult");
-
-  function imageSource(item) {
-    if (item?.b64_json) {
-      return `data:${item.mime_type || "image/png"};base64,${item.b64_json}`;
-    }
-
-    return item?.url || null;
-  }
-
-  async function jpegBlob(src) {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-
-    await new Promise((resolve, reject) => {
-      img.onload = resolve;
-      img.onerror = reject;
-      img.src = src;
-    });
-
-    const canvas = document.createElement("canvas");
-
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-
-    const ctx = canvas.getContext("2d");
-
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0);
-
-    return await new Promise(resolve => {
-      canvas.toBlob(resolve, "image/jpeg", .95);
-    });
-  }
-
-  imageForm.onsubmit = async event => {
-    event.preventDefault();
-
-    const button = document.getElementById("imageGenerate");
-
-    button.disabled = true;
-    imageResult.innerHTML = "";
-
-    imageStatus.classList.add("show");
-    imageStatusText.textContent = "Generating image...";
-    imageDetail.textContent =
-      `Using ${referenceFiles.length} reference image${referenceFiles.length === 1 ? "" : "s"}`;
-    imageError.textContent = "";
-
-    try {
-      if (!imageModel.value) {
-        throw new Error("Select a live Nano Banana model.");
-      }
-
-      const form = new FormData();
-
-      form.append("model", imageModel.value);
-
-      form.append(
-        "prompt",
-        document.getElementById("imagePrompt").value
-      );
-
-      form.append(
-        "resolution",
-        document.getElementById("imageResolution").value
-      );
-
-      referenceFiles.forEach(file => {
-        form.append("images", file);
-      });
-
-      const response = await fetch("/api/generate-image", {
-        method: "POST",
-        body: form
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Image generation failed.");
-      }
-
-      const src = imageSource(data.data?.[0]);
-
-      if (!src) {
-        throw new Error("Surplus returned no image.");
-      }
-
-      const image = document.createElement("img");
-
-      image.className = "result-image";
-      image.src = src;
-
-      const actions = document.createElement("div");
-      actions.className = "actions";
-
-      const download = document.createElement("button");
-
-      download.type = "button";
-      download.textContent = "Download JPG";
-
-      download.onclick = async () => {
-        const blob = await jpegBlob(src);
-
-        const url = URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-
-        link.href = url;
-        link.download = "thumbnail.jpg";
-
-        link.click();
-
-        setTimeout(() => URL.revokeObjectURL(url), 2000);
-      };
-
-      actions.appendChild(download);
-
-      imageResult.append(image, actions);
-
-      imageStatusText.textContent = "Completed";
-
-      imageDetail.textContent =
-        `Model used: ${data.model} · References: ${data.usedReferences}`;
-    } catch (err) {
-      imageStatusText.textContent = "Generation failed";
-      imageError.textContent = err.message;
-    } finally {
-      button.disabled = false;
-    }
-  };
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));t.classList.add("active");document.getElementById(t.dataset.tab).classList.add("active")});
+fetch("/api/config").then(r=>r.json()).then(c=>{if(c.defaultVideoModel)document.getElementById("videoModel").value=c.defaultVideoModel});
+
+const vs=document.getElementById("videoStatus"),vst=document.getElementById("videoStatusText"),vd=document.getElementById("videoDetail"),ve=document.getElementById("videoError"),vr=document.getElementById("videoResult");
+function showV(t,d=""){vs.classList.add("show");vst.textContent=t;vd.textContent=d;ve.textContent=""}
+async function poll(id){while(true){const r=await fetch("/api/status/"+encodeURIComponent(id));const d=await r.json();if(!r.ok)throw Error(d.error||"Status failed");showV("Status: "+(d.status||"unknown"),"Job ID: "+id);if(d.status==="succeeded")return d;if(["failed","canceled","expired"].includes(d.status))throw Error(d.error?.message||("Generation "+d.status));await new Promise(x=>setTimeout(x,4000))}}
+document.getElementById("videoForm").onsubmit=async e=>{e.preventDefault();const b=document.getElementById("videoGenerate");b.disabled=true;vr.innerHTML="";showV("Submitting generation...");try{const r=await fetch("/api/generate",{method:"POST",body:new FormData(e.target)});const d=await r.json();if(!r.ok)throw Error(d.error||"Generation failed");const f=await poll(d.id);const a=f.results?.[0];const src=a?.url||a?.download_url;if(!src)throw Error("No video artifact returned");vr.innerHTML=`<video class="video" controls src="${src}"></video>`;showV("Completed","Job ID: "+d.id)}catch(x){vs.classList.add("show");vst.textContent="Generation failed";ve.textContent=x.message}finally{b.disabled=false}};
+
+let refs=[];
+const ri=document.getElementById("referenceInput"),rp=document.getElementById("referencePreview");
+function render(){rp.innerHTML="";refs.forEach((f,i)=>{const box=document.createElement("div");box.className="thumb";const img=document.createElement("img");img.src=URL.createObjectURL(f);const x=document.createElement("button");x.type="button";x.textContent="×";x.onclick=()=>{refs.splice(i,1);render()};box.append(img,x);rp.append(box)})}
+ri.onchange=()=>{refs=[...refs,...Array.from(ri.files||[])].slice(0,8);ri.value="";render()};
+document.querySelectorAll("#resolutionButtons .choice").forEach(b=>b.onclick=()=>{document.querySelectorAll("#resolutionButtons .choice").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById("imageResolution").value=b.dataset.value});
+
+const is=document.getElementById("imageStatus"),ist=document.getElementById("imageStatusText"),idetail=document.getElementById("imageDetail"),ie=document.getElementById("imageError"),ires=document.getElementById("imageResult");
+function srcOf(i){return i?.b64_json?`data:${i.mime_type||"image/png"};base64,${i.b64_json}`:i?.url||null}
+async function jpg(src){const im=new Image();im.crossOrigin="anonymous";await new Promise((ok,no)=>{im.onload=ok;im.onerror=no;im.src=src});const c=document.createElement("canvas");c.width=im.naturalWidth;c.height=im.naturalHeight;const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0);return await new Promise(ok=>c.toBlob(ok,"image/jpeg",.95))}
+document.getElementById("imageForm").onsubmit=async e=>{e.preventDefault();const b=document.getElementById("imageGenerate");b.disabled=true;ires.innerHTML="";is.classList.add("show");ist.textContent="Generating image...";idetail.textContent=`Using ${refs.length} reference image${refs.length===1?"":"s"}`;ie.textContent="";try{if(!refs.length)throw Error("Add at least one reference image.");const f=new FormData();f.append("model",document.getElementById("imageModel").value);f.append("prompt",document.getElementById("imagePrompt").value);f.append("resolution",document.getElementById("imageResolution").value);refs.forEach(x=>f.append("images",x));const r=await fetch("/api/generate-image",{method:"POST",body:f});const d=await r.json();if(!r.ok)throw Error(d.error||"Image generation failed");const src=srcOf(d.data?.[0]);if(!src)throw Error("Surplus returned no image");const im=document.createElement("img");im.className="result";im.src=src;const acts=document.createElement("div");acts.className="actions";const dl=document.createElement("button");dl.type="button";dl.textContent="Download JPG";dl.onclick=async()=>{const blob=await jpg(src);const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download="thumbnail.jpg";a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)};acts.append(dl);ires.append(im,acts);ist.textContent="Completed";idetail.textContent=`Model used: ${d.model} · References: ${d.usedReferences}`}catch(x){ist.textContent="Generation failed";ie.textContent=x.message}finally{b.disabled=false}};
 </script>
-
 </body>
 </html>
