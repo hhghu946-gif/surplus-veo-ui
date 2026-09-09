@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Surplus AI Studio</title>
 <style>
-:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:#0b0d10;color:#f4f7fb}.wrap{max-width:1040px;margin:auto;padding:36px 20px 80px}h1{margin:0;font-size:30px}.sub,.small{color:#93a0af}.tabs{display:flex;gap:8px;margin:26px 0 16px;background:#101419;border:1px solid #252b33;padding:6px;border-radius:14px}.tab{flex:1;border:0;background:transparent;color:#aeb8c6;font-weight:750}.tab.active,.primary,.choice.active{background:#f4f7fb;color:#0b0d10}.panel{display:none}.panel.active{display:block}.card{background:#12161b;border:1px solid #252b33;border-radius:18px;padding:22px}label{display:block;font-size:13px;color:#aeb8c6;margin:0 0 7px}input,textarea,select,button{width:100%;border-radius:11px;border:1px solid #303944;background:#0d1116;color:#f7f9fb;padding:12px 13px;font:inherit}textarea{min-height:145px;resize:vertical}input[type=file]{padding:18px;border-style:dashed}.primary{margin-top:20px;font-weight:800;border:0}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.control{margin-top:18px}.row{display:flex;gap:8px;flex-wrap:wrap}.choice{width:auto;font-weight:700}.status{display:none;margin-top:20px;border:1px solid #28303a;border-radius:12px;padding:14px;background:#0d1116}.status.show{display:block}.error{color:#ff9e9e;margin-top:10px;white-space:pre-wrap}.previews{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:12px;margin-top:14px}.thumb{position:relative;aspect-ratio:16/10;border:1px solid #2b333d;border-radius:12px;overflow:hidden}.thumb img{width:100%;height:100%;object-fit:cover}.thumb button{position:absolute;top:6px;right:6px;width:28px;height:28px;padding:0;border:0;border-radius:50%;background:#000c}.result,.video{width:100%;margin-top:18px;border-radius:14px}.actions{margin-top:12px}.actions button{width:auto;background:#252d37}@media(max-width:720px){.grid2{grid-template-columns:1fr}}
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:#0b0d10;color:#f4f7fb}.wrap{max-width:1100px;margin:auto;padding:36px 20px 80px}h1{margin:0;font-size:30px}.sub,.small{color:#93a0af}.tabs{display:flex;gap:8px;margin:26px 0 16px;background:#101419;border:1px solid #252b33;padding:6px;border-radius:14px}.tab{flex:1;border:0;background:transparent;color:#aeb8c6;font-weight:750}.tab.active,.primary,.choice.active{background:#f4f7fb;color:#0b0d10}.panel{display:none}.panel.active{display:block}.card{background:#12161b;border:1px solid #252b33;border-radius:18px;padding:22px}label{display:block;font-size:13px;color:#aeb8c6;margin:0 0 7px}input,textarea,select,button{width:100%;border-radius:11px;border:1px solid #303944;background:#0d1116;color:#f7f9fb;padding:12px 13px;font:inherit}textarea{min-height:120px;resize:vertical}input[type=file]{padding:18px;border-style:dashed}.primary{margin-top:20px;font-weight:800;border:0}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.control{margin-top:18px}.row{display:flex;gap:8px;flex-wrap:wrap}.choice{width:auto;font-weight:700}.status{display:none;margin-top:20px;border:1px solid #28303a;border-radius:12px;padding:14px;background:#0d1116}.status.show{display:block}.error{color:#ff9e9e;margin-top:10px;white-space:pre-wrap}.previews{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:12px;margin-top:14px}.thumb{position:relative;aspect-ratio:16/10;border:1px solid #2b333d;border-radius:12px;overflow:hidden}.thumb img{width:100%;height:100%;object-fit:cover}.thumb button{position:absolute;top:6px;right:6px;width:28px;height:28px;padding:0;border:0;border-radius:50%;background:#000c}.video,.result{width:100%;margin-top:14px;border-radius:14px}.prompt-list{display:flex;flex-direction:column;gap:12px}.prompt-item,.queue-item{border:1px solid #2b333d;border-radius:12px;padding:12px;background:#0d1116}.prompt-head,.queue-meta{display:flex;justify-content:space-between;gap:12px;align-items:center}.remove-prompt{width:auto;padding:6px 10px}.queue-result img{width:100%;border-radius:12px;margin-top:10px}.queued{color:#aeb8c6}.running{color:#fff}.success{color:#9fe5b3}.failed{color:#ff9e9e}.actions{margin-top:10px}.actions button{width:auto;background:#252d37}@media(max-width:720px){.grid2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -36,37 +36,53 @@
 <form id="imageForm">
 <label>Model</label>
 <select id="imageModel">
-  <option value="nano-banana-2-edit" selected>Nano Banana 2 Edit</option>
-  <option value="nano-banana-pro-edit">Nano Banana Pro Edit</option>
+<option value="nano-banana-2-edit" selected>Nano Banana 2 Edit</option>
+<option value="nano-banana-pro-edit">Nano Banana Pro Edit</option>
+<option value="gpt-5-image">GPT-5 Image</option>
 </select>
-<div class="small" style="margin-top:7px">Only the two edit models are available.</div>
 
 <div class="control">
-<label>Reference images (1–8)</label>
+<label>Reference images</label>
 <input id="referenceInput" type="file" accept="image/*" multiple>
-<div class="small" style="margin-top:7px">All uploaded images are sent as references. Up to 8.</div>
+<div class="small" style="margin-top:7px">Up to 8 references. Same references are used for every queued prompt.</div>
 <div id="referencePreview" class="previews"></div>
 </div>
 
-<div class="control"><label>Prompt</label><textarea id="imagePrompt" required></textarea></div>
+<div class="control">
+<label>Image prompts</label>
+<div id="promptList" class="prompt-list"></div>
+<button id="addPrompt" type="button" class="choice" style="margin-top:10px">+ Add Prompt</button>
+<div class="small" style="margin-top:7px">Each prompt runs one after another in sequence.</div>
+</div>
 
 <div class="control">
 <label>Aspect ratio</label>
-<div class="row"><button type="button" class="choice active">16:9</button><button type="button" class="choice">9:16</button><button type="button" class="choice">1:1</button><button type="button" class="choice">4:3</button><button type="button" class="choice">3:4</button></div>
-<div class="small" style="margin-top:7px">Display preference only for now; not sent to Surplus.</div>
+<div id="aspectButtons" class="row">
+<button type="button" class="choice active" data-value="16:9">16:9</button>
+<button type="button" class="choice" data-value="9:16">9:16</button>
+<button type="button" class="choice" data-value="1:1">1:1</button>
+<button type="button" class="choice" data-value="4:3">4:3</button>
+<button type="button" class="choice" data-value="3:4">3:4</button>
+</div>
+<input id="imageAspect" type="hidden" value="16:9">
 </div>
 
 <div class="control">
 <label>Resolution</label>
-<div id="resolutionButtons" class="row"><button type="button" class="choice" data-value="1K">1K</button><button type="button" class="choice active" data-value="2K">2K</button><button type="button" class="choice" data-value="4K">4K</button></div>
+<div id="resolutionButtons" class="row">
+<button type="button" class="choice" data-value="1K">1K</button>
+<button type="button" class="choice active" data-value="2K">2K</button>
+<button type="button" class="choice" data-value="4K">4K</button>
+</div>
 <input id="imageResolution" type="hidden" value="2K">
 </div>
 
 <div class="control"><label>Output format</label><div class="row"><button type="button" class="choice active">JPG</button></div></div>
-<button id="imageGenerate" class="primary">Generate Image</button>
+<button id="imageGenerate" class="primary">Start Queue</button>
 </form>
+
 <div id="imageStatus" class="status"><strong id="imageStatusText"></strong><div id="imageDetail" class="small"></div><div id="imageError" class="error"></div></div>
-<div id="imageResult"></div>
+<div id="queueResults"></div>
 </div></section>
 </div>
 
@@ -77,18 +93,46 @@ fetch("/api/config").then(r=>r.json()).then(c=>{if(c.defaultVideoModel)document.
 const vs=document.getElementById("videoStatus"),vst=document.getElementById("videoStatusText"),vd=document.getElementById("videoDetail"),ve=document.getElementById("videoError"),vr=document.getElementById("videoResult");
 function showV(t,d=""){vs.classList.add("show");vst.textContent=t;vd.textContent=d;ve.textContent=""}
 async function poll(id){while(true){const r=await fetch("/api/status/"+encodeURIComponent(id));const d=await r.json();if(!r.ok)throw Error(d.error||"Status failed");showV("Status: "+(d.status||"unknown"),"Job ID: "+id);if(d.status==="succeeded")return d;if(["failed","canceled","expired"].includes(d.status))throw Error(d.error?.message||("Generation "+d.status));await new Promise(x=>setTimeout(x,4000))}}
-document.getElementById("videoForm").onsubmit=async e=>{e.preventDefault();const b=document.getElementById("videoGenerate");b.disabled=true;vr.innerHTML="";showV("Submitting generation...");try{const r=await fetch("/api/generate",{method:"POST",body:new FormData(e.target)});const d=await r.json();if(!r.ok)throw Error(d.error||"Generation failed");const f=await poll(d.id);const a=f.results?.[0];const src=a?.url||a?.download_url;if(!src)throw Error("No video artifact returned");vr.innerHTML=`<video class="video" controls src="${src}"></video>`;showV("Completed","Job ID: "+d.id)}catch(x){vs.classList.add("show");vst.textContent="Generation failed";ve.textContent=x.message}finally{b.disabled=false}};
+document.getElementById("videoForm").onsubmit=async e=>{e.preventDefault();const b=document.getElementById("videoGenerate");b.disabled=true;vr.innerHTML="";showV("Submitting generation...");try{const r=await fetch("/api/generate",{method:"POST",body:new FormData(e.target)});const d=await r.json();if(!r.ok)throw Error(d.error||"Generation failed");const f=await poll(d.id);const a=f.results?.[0],src=a?.url||a?.download_url;if(!src)throw Error("No video artifact returned");vr.innerHTML=`<video class="video" controls src="${src}"></video>`;showV("Completed","Job ID: "+d.id)}catch(x){vs.classList.add("show");vst.textContent="Generation failed";ve.textContent=x.message}finally{b.disabled=false}};
 
 let refs=[];
 const ri=document.getElementById("referenceInput"),rp=document.getElementById("referencePreview");
-function render(){rp.innerHTML="";refs.forEach((f,i)=>{const box=document.createElement("div");box.className="thumb";const img=document.createElement("img");img.src=URL.createObjectURL(f);const x=document.createElement("button");x.type="button";x.textContent="×";x.onclick=()=>{refs.splice(i,1);render()};box.append(img,x);rp.append(box)})}
-ri.onchange=()=>{refs=[...refs,...Array.from(ri.files||[])].slice(0,8);ri.value="";render()};
-document.querySelectorAll("#resolutionButtons .choice").forEach(b=>b.onclick=()=>{document.querySelectorAll("#resolutionButtons .choice").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById("imageResolution").value=b.dataset.value});
+function renderRefs(){rp.innerHTML="";refs.forEach((f,i)=>{const box=document.createElement("div");box.className="thumb";const img=document.createElement("img");img.src=URL.createObjectURL(f);const x=document.createElement("button");x.type="button";x.textContent="×";x.onclick=()=>{refs.splice(i,1);renderRefs()};box.append(img,x);rp.append(box)})}
+ri.onchange=()=>{refs=[...refs,...Array.from(ri.files||[])].slice(0,8);ri.value="";renderRefs()};
 
-const is=document.getElementById("imageStatus"),ist=document.getElementById("imageStatusText"),idetail=document.getElementById("imageDetail"),ie=document.getElementById("imageError"),ires=document.getElementById("imageResult");
+function wireChoices(container,hidden){document.querySelectorAll(`#${container} .choice`).forEach(b=>b.onclick=()=>{document.querySelectorAll(`#${container} .choice`).forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById(hidden).value=b.dataset.value})}
+wireChoices("resolutionButtons","imageResolution");wireChoices("aspectButtons","imageAspect");
+
+let promptCounter=0;
+const promptList=document.getElementById("promptList");
+function addPrompt(value=""){promptCounter++;const item=document.createElement("div");item.className="prompt-item";item.innerHTML=`<div class="prompt-head"><strong>Prompt ${promptCounter}</strong><button type="button" class="remove-prompt">Remove</button></div><textarea class="queue-prompt" placeholder="Enter image prompt..." required>${value}</textarea>`;item.querySelector(".remove-prompt").onclick=()=>{if(document.querySelectorAll(".prompt-item").length>1)item.remove()};promptList.append(item)}
+document.getElementById("addPrompt").onclick=()=>addPrompt();addPrompt();
+
 function srcOf(i){return i?.b64_json?`data:${i.mime_type||"image/png"};base64,${i.b64_json}`:i?.url||null}
 async function jpg(src){const im=new Image();im.crossOrigin="anonymous";await new Promise((ok,no)=>{im.onload=ok;im.onerror=no;im.src=src});const c=document.createElement("canvas");c.width=im.naturalWidth;c.height=im.naturalHeight;const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0);return await new Promise(ok=>c.toBlob(ok,"image/jpeg",.95))}
-document.getElementById("imageForm").onsubmit=async e=>{e.preventDefault();const b=document.getElementById("imageGenerate");b.disabled=true;ires.innerHTML="";is.classList.add("show");ist.textContent="Generating image...";idetail.textContent=`Using ${refs.length} reference image${refs.length===1?"":"s"}`;ie.textContent="";try{if(!refs.length)throw Error("Add at least one reference image.");const f=new FormData();f.append("model",document.getElementById("imageModel").value);f.append("prompt",document.getElementById("imagePrompt").value);f.append("resolution",document.getElementById("imageResolution").value);refs.forEach(x=>f.append("images",x));const r=await fetch("/api/generate-image",{method:"POST",body:f});const d=await r.json();if(!r.ok)throw Error(d.error||"Image generation failed");const src=srcOf(d.data?.[0]);if(!src)throw Error("Surplus returned no image");const im=document.createElement("img");im.className="result";im.src=src;const acts=document.createElement("div");acts.className="actions";const dl=document.createElement("button");dl.type="button";dl.textContent="Download JPG";dl.onclick=async()=>{const blob=await jpg(src);const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download="thumbnail.jpg";a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)};acts.append(dl);ires.append(im,acts);ist.textContent="Completed";idetail.textContent=`Model used: ${d.model} · References: ${d.usedReferences}`}catch(x){ist.textContent="Generation failed";ie.textContent=x.message}finally{b.disabled=false}};
+function queueCard(prompt,index){const el=document.createElement("div");el.className="queue-item";el.innerHTML=`<div class="queue-meta"><strong>Prompt ${index+1}</strong><span class="queued">Queued</span></div><div class="small" style="margin-top:7px">${prompt.replace(/</g,"&lt;")}</div><div class="queue-result"></div>`;return el}
+
+document.getElementById("imageForm").onsubmit=async e=>{
+e.preventDefault();
+const b=document.getElementById("imageGenerate"),status=document.getElementById("imageStatus"),st=document.getElementById("imageStatusText"),detail=document.getElementById("imageDetail"),err=document.getElementById("imageError"),results=document.getElementById("queueResults");
+const prompts=[...document.querySelectorAll(".queue-prompt")].map(x=>x.value.trim()).filter(Boolean);
+if(!prompts.length)return;
+const model=document.getElementById("imageModel").value;
+if(model!=="gpt-5-image"&&refs.length===0){status.classList.add("show");st.textContent="Queue not started";err.textContent="Nano Banana Edit requires at least one reference image.";return}
+b.disabled=true;results.innerHTML="";status.classList.add("show");st.textContent="Queue running";err.textContent="";
+const cards=prompts.map((p,i)=>{const c=queueCard(p,i);results.append(c);return c});
+let completed=0,failed=0;
+for(let i=0;i<prompts.length;i++){
+ const card=cards[i],badge=card.querySelector("span"),out=card.querySelector(".queue-result");
+ badge.textContent="Running";badge.className="running";detail.textContent=`Processing ${i+1} of ${prompts.length}`;
+ try{
+   const f=new FormData();f.append("model",model);f.append("prompt",prompts[i]);f.append("resolution",document.getElementById("imageResolution").value);f.append("aspect_ratio",document.getElementById("imageAspect").value);refs.forEach(x=>f.append("images",x));
+   const r=await fetch("/api/generate-image",{method:"POST",body:f});const d=await r.json();if(!r.ok)throw Error(d.error||"Image generation failed");const src=srcOf(d.data?.[0]);if(!src)throw Error("Surplus returned no image");
+   const im=document.createElement("img");im.src=src;const acts=document.createElement("div");acts.className="actions";const dl=document.createElement("button");dl.type="button";dl.textContent="Download JPG";dl.onclick=async()=>{const blob=await jpg(src);const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download=`thumbnail-${i+1}.jpg`;a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)};acts.append(dl);out.append(im,acts);badge.textContent="Completed";badge.className="success";completed++;
+ }catch(x){badge.textContent="Failed";badge.className="failed";out.innerHTML=`<div class="error">${String(x.message).replace(/</g,"&lt;")}</div>`;failed++}
+}
+st.textContent="Queue finished";detail.textContent=`${completed} completed · ${failed} failed · ${prompts.length} total`;b.disabled=false;
+};
 </script>
 </body>
 </html>
