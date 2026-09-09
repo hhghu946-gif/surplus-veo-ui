@@ -145,8 +145,7 @@ app.post("/api/generate-image", imageUpload.array("images", 8), async (req, res)
       body = {
         model,
         prompt,
-        size: sizeFor(aspectRatio, "1K"),
-        response_format: "b64_json"
+        size: sizeFor(aspectRatio, "1K")
       };
     } else {
       // Nano Banana edit models keep the resolution controls.
