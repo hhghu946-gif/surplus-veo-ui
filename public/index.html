@@ -67,7 +67,7 @@
 <input id="imageAspect" type="hidden" value="16:9">
 </div>
 
-<div class="control">
+<div class="control" id="resolutionControl">
 <label>Resolution</label>
 <div id="resolutionButtons" class="row">
 <button type="button" class="choice" data-value="1K">1K</button>
@@ -103,6 +103,17 @@ ri.onchange=()=>{refs=[...refs,...Array.from(ri.files||[])].slice(0,8);ri.value=
 function wireChoices(container,hidden){document.querySelectorAll(`#${container} .choice`).forEach(b=>b.onclick=()=>{document.querySelectorAll(`#${container} .choice`).forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById(hidden).value=b.dataset.value})}
 wireChoices("resolutionButtons","imageResolution");wireChoices("aspectButtons","imageAspect");
 
+const imageModelSelect = document.getElementById("imageModel");
+const resolutionControl = document.getElementById("resolutionControl");
+
+function updateModelControls(){
+  const isGpt5 = imageModelSelect.value === "gpt-5-image";
+  resolutionControl.style.display = isGpt5 ? "none" : "block";
+}
+
+imageModelSelect.addEventListener("change", updateModelControls);
+updateModelControls();
+
 let promptCounter=0;
 const promptList=document.getElementById("promptList");
 function addPrompt(value=""){promptCounter++;const item=document.createElement("div");item.className="prompt-item";item.innerHTML=`<div class="prompt-head"><strong>Prompt ${promptCounter}</strong><button type="button" class="remove-prompt">Remove</button></div><textarea class="queue-prompt" placeholder="Enter image prompt..." required>${value}</textarea>`;item.querySelector(".remove-prompt").onclick=()=>{if(document.querySelectorAll(".prompt-item").length>1)item.remove()};promptList.append(item)}
@@ -126,7 +137,14 @@ for(let i=0;i<prompts.length;i++){
  const card=cards[i],badge=card.querySelector("span"),out=card.querySelector(".queue-result");
  badge.textContent="Running";badge.className="running";detail.textContent=`Processing ${i+1} of ${prompts.length}`;
  try{
-   const f=new FormData();f.append("model",model);f.append("prompt",prompts[i]);f.append("resolution",document.getElementById("imageResolution").value);f.append("aspect_ratio",document.getElementById("imageAspect").value);refs.forEach(x=>f.append("images",x));
+   const f=new FormData();
+   f.append("model",model);
+   f.append("prompt",prompts[i]);
+   if(model!=="gpt-5-image"){
+     f.append("resolution",document.getElementById("imageResolution").value);
+   }
+   f.append("aspect_ratio",document.getElementById("imageAspect").value);
+   refs.forEach(x=>f.append("images",x));
    const r=await fetch("/api/generate-image",{method:"POST",body:f});const d=await r.json();if(!r.ok)throw Error(d.error||"Image generation failed");const src=srcOf(d.data?.[0]);if(!src)throw Error("Surplus returned no image");
    const im=document.createElement("img");im.src=src;const acts=document.createElement("div");acts.className="actions";const dl=document.createElement("button");dl.type="button";dl.textContent="Download JPG";dl.onclick=async()=>{const blob=await jpg(src);const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download=`thumbnail-${i+1}.jpg`;a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)};acts.append(dl);out.append(im,acts);badge.textContent="Completed";badge.className="success";completed++;
  }catch(x){badge.textContent="Failed";badge.className="failed";out.innerHTML=`<div class="error">${String(x.message).replace(/</g,"&lt;")}</div>`;failed++}
