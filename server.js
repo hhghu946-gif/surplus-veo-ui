@@ -58,7 +58,6 @@ app.post("/api/generate", upload.single("image"), async (req, res) => {
     const prompt = String(req.body.prompt || "").trim();
     const model = String(req.body.model || DEFAULT_MODEL).trim();
     const aspectRatio = String(req.body.aspect_ratio || "16:9").trim();
-    const audio = String(req.body.audio || "false") === "true";
 
     if (!prompt) return res.status(400).json({ error: "Prompt is required." });
     if (!req.file) return res.status(400).json({ error: "Reference image is required." });
@@ -73,7 +72,6 @@ app.post("/api/generate", upload.single("image"), async (req, res) => {
       prompt,
       image_url: dataUrl,
       aspect_ratio: aspectRatio,
-      audio
     };
 
     const result = await surplus("/v1/video/generations", {
