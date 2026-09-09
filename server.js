@@ -127,28 +127,47 @@ function friendlyName(id = "") {
   return id;
 }
 
-async function getLiveNanoBananaModels() {
-  const response = await fetch(`${API_URL}/v1/models`, {
+async function getActiveNanoBananaModels() {
+  const response = await fetch(`${API_URL}/api/markets`, {
     signal: AbortSignal.timeout(30000)
   });
 
   if (!response.ok) {
-    throw new Error(`Could not load Surplus model catalog (${response.status}).`);
+    throw new Error(`Could not load Surplus active markets (${response.status}).`);
   }
 
   const json = await response.json();
-  const rows = Array.isArray(json?.data) ? json.data : [];
 
-  return rows
-    .filter(m => isNanoBanana(m?.id))
-    .map(m => ({
-      id: m.id,
-      label: friendlyName(m.id),
-      input_modalities: m?.architecture?.input_modalities || [],
-      supported_features: m?.supported_features || [],
-      supported_parameters: m?.supported_parameters || []
-    }))
-    .sort((a, b) => a.id.localeCompare(b.id));
+  // Be tolerant of common response wrappers/shapes.
+  const rows =
+    Array.isArray(json) ? json :
+    Array.isArray(json?.data) ? json.data :
+    Array.isArray(json?.markets) ? json.markets :
+    Array.isArray(json?.models) ? json.models :
+    [];
+
+  const found = [];
+
+  for (const row of rows) {
+    const candidates = [
+      row?.model,
+      row?.model_id,
+      row?.id,
+      row?.name,
+      row?.slug
+    ].filter(v => typeof v === "string");
+
+    for (const id of candidates) {
+      if (isNanoBanana(id) && !found.some(x => x.id === id)) {
+        found.push({
+          id,
+          label: friendlyName(id)
+        });
+      }
+    }
+  }
+
+  return found.sort((a, b) => a.id.localeCompare(b.id));
 }
 
 // -------------------- CONFIG --------------------
@@ -159,11 +178,11 @@ app.get("/api/config", (_req, res) => {
 
 app.get("/api/image-models", async (_req, res) => {
   try {
-    const models = await getLiveNanoBananaModels();
+    const models = await getActiveNanoBananaModels();
 
     res.json({
       models,
-      note: "These are exact IDs returned by Surplus /v1/models right now."
+      note: "These are exact Nano Banana IDs with active Surplus marketplace offers right now."
     });
   } catch (err) {
     res.status(500).json({
@@ -288,13 +307,13 @@ app.post(
       }
 
       // Verify that the selected ID is still in the CURRENT Surplus catalog.
-      const liveModels = await getLiveNanoBananaModels();
-      const liveMatch = liveModels.find(m => m.id === model);
+      const activeModels = await getActiveNanoBananaModels();
+      const activeMatch = activeModels.find(m => m.id === model);
 
-      if (!liveMatch) {
+      if (!activeMatch) {
         return res.status(400).json({
           error:
-            `The selected model "${model}" is no longer in the live Surplus Nano Banana catalog. Refresh the page and select again.`
+            `The selected model "${model}" does not currently have an active Surplus marketplace offer. Refresh the page and select again.`
         });
       }
 
