@@ -310,11 +310,11 @@
         <label>Model</label>
 
         <select id="imageModel" name="model">
-          <option value="">Loading live Nano Banana models...</option>
+          <option value="">Loading active Nano Banana models...</option>
         </select>
 
         <div id="modelNote" class="model-note">
-          Loading exact model IDs from Surplus...
+          Loading active marketplace model IDs from Surplus...
         </div>
 
         <div class="control-block">
@@ -443,7 +443,7 @@
           '<option value="">No live Nano Banana models found</option>';
 
         modelNote.textContent =
-          "Surplus /v1/models currently returned no Nano Banana IDs.";
+          "Surplus /api/markets currently returned no active Nano Banana offers.";
 
         return;
       }
@@ -458,7 +458,7 @@
       });
 
       modelNote.textContent =
-        `${data.models.length} exact live Nano Banana model ID(s) loaded from Surplus.`;
+        `${data.models.length} active Nano Banana marketplace model ID(s) loaded from Surplus.`;
     })
     .catch(err => {
       imageModel.innerHTML =
