@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Surplus AI Studio</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif; background:#0b0d10; color:#f4f7fb; min-height:100vh; }
+    .wrap { max-width:1040px; margin:0 auto; padding:36px 20px 80px; }
+    h1 { margin:0; font-size:30px; }
+    .sub { color:#97a3b1; margin-top:6px; font-size:14px; }
+    .tabs { display:flex; gap:8px; margin:26px 0 16px; background:#101419; border:1px solid #252b33; padding:6px; border-radius:14px; }
+    .tab { margin:0; width:auto; flex:1; padding:12px 16px; border-radius:10px; background:transparent; color:#aeb8c6; font-weight:700; cursor:pointer; border:0; }
+    .tab.active { background:#f4f7fb; color:#0b0d10; }
+    .panel { display:none; }
+    .panel.active { display:block; }
+    .card { background:#12161b; border:1px solid #252b33; border-radius:18px; padding:22px; box-shadow:0 18px 50px rgba(0,0,0,.22); }
+    label { display:block; font-size:13px; color:#aeb8c6; margin:0 0 7px; }
+    input,textarea,select,button { width:100%; border-radius:11px; border:1px solid #303944; background:#0d1116; color:#f7f9fb; padding:12px 13px; font:inherit; }
+    textarea { min-height:145px; resize:vertical; line-height:1.5; }
+    input[type=file] { padding:18px; border-style:dashed; }
+    button { cursor:pointer; }
+    button:disabled { opacity:.45; cursor:not-allowed; }
+    .primary { margin-top:20px; background:#f4f7fb; color:#0b0d10; font-weight:800; border:0; }
+    .grid2 { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-top:16px; }
+    .field { min-width:0; }
+    .small { color:#93a0af; font-size:13px; }
+    .status { display:none; margin-top:20px; border:1px solid #28303a; border-radius:12px; padding:14px; background:#0d1116; }
+    .status.show { display:block; }
+    .error { color:#ff9e9e; white-space:pre-wrap; margin-top:10px; }
+    .video-preview { width:100%; border-radius:14px; margin-top:18px; background:#000; max-height:560px; }
+    .reference-preview { display:grid; grid-template-columns:repeat(auto-fill,minmax(135px,1fr)); gap:12px; margin-top:14px; }
+    .thumb { position:relative; border:1px solid #2b333d; border-radius:12px; overflow:hidden; background:#0d1116; aspect-ratio:16/10; }
+    .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .thumb button { position:absolute; top:6px; right:6px; width:28px; height:28px; padding:0; border:0; border-radius:50%; background:rgba(0,0,0,.72); color:white; font-size:16px; }
+    .button-row { display:flex; flex-wrap:wrap; gap:8px; }
+    .choice { width:auto; margin:0; padding:10px 14px; background:#0d1116; color:#cbd3dc; border:1px solid #303944; font-weight:650; }
+    .choice.active { background:#f4f7fb; color:#0b0d10; border-color:#f4f7fb; }
+    .control-block { margin-top:18px; }
+    .result-image { width:100%; margin-top:18px; border-radius:14px; border:1px solid #2b333d; display:block; background:#080a0c; }
+    .actions { display:flex; gap:10px; margin-top:12px; }
+    .actions button,.actions a { width:auto; display:inline-block; padding:10px 14px; border-radius:10px; background:#252d37; color:#fff; text-decoration:none; border:0; }
+    .model-note { margin-top:8px; color:#93a0af; font-size:12px; }
+    @media(max-width:720px){ .grid2{grid-template-columns:1fr;} .wrap{padding-top:24px;} }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Surplus AI Studio</h1>
+  <div class="sub">Private image and video generation interface</div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="videoPanel">Video Generation</button>
+    <button class="tab" data-tab="imagePanel">Image Generation</button>
+  </div>
+
+  <section id="videoPanel" class="panel active">
+    <div class="card">
+      <form id="videoForm">
+        <div class="field">
+          <label>Reference image</label>
+          <input name="image" type="file" accept="image/*" required />
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label>Prompt</label>
+            <textarea name="prompt" placeholder="Describe the video and camera movement..." required></textarea>
+          </div>
+          <div class="field">
+            <label>Model ID</label>
+            <input id="videoModel" name="model" value="veo3-fast-image-to-video" />
+          </div>
+        </div>
+
+        <div class="control-block">
+          <label>Aspect ratio</label>
+          <select name="aspect_ratio">
+            <option value="16:9" selected>16:9</option>
+            <option value="9:16">9:16</option>
+            <option value="1:1">1:1</option>
+            <option value="4:3">4:3</option>
+            <option value="3:4">3:4</option>
+          </select>
+        </div>
+
+        <button id="videoGenerate" class="primary" type="submit">Generate Video</button>
+      </form>
+
+      <div id="videoStatus" class="status">
+        <strong id="videoStatusText">Preparing...</strong>
+        <div id="videoDetail" class="small" style="margin-top:6px"></div>
+        <div id="videoError" class="error"></div>
+      </div>
+      <div id="videoResult"></div>
+    </div>
+  </section>
+
+  <section id="imagePanel" class="panel">
+    <div class="card">
+      <form id="imageForm">
+        <div class="field">
+          <label>Model</label>
+          <select id="imageModelFamily" name="model_family">
+            <option value="nano-banana-pro" selected>Nano Banana Pro</option>
+            <option value="nano-banana-2">Nano Banana 2</option>
+          </select>
+          <div id="modelNote" class="model-note">The server resolves the live Surplus model ID automatically.</div>
+        </div>
+
+        <div class="control-block">
+          <label>Reference images (optional, up to 8)</label>
+          <input id="referenceInput" type="file" accept="image/*" multiple />
+          <div class="small" style="margin-top:7px">Select several images at once, or add more later. All are used as references.</div>
+          <div id="referencePreview" class="reference-preview"></div>
+        </div>
+
+        <div class="control-block">
+          <label>Prompt</label>
+          <textarea id="imagePrompt" name="prompt" placeholder="Describe the thumbnail you want to create or how the references should be used..." required></textarea>
+        </div>
+
+        <div class="control-block">
+          <label>Aspect ratio</label>
+          <div id="aspectButtons" class="button-row">
+            <button type="button" class="choice active" data-value="16:9">16:9</button>
+            <button type="button" class="choice" data-value="9:16">9:16</button>
+            <button type="button" class="choice" data-value="1:1">1:1</button>
+            <button type="button" class="choice" data-value="4:3">4:3</button>
+            <button type="button" class="choice" data-value="3:4">3:4</button>
+          </div>
+          <input type="hidden" id="imageAspect" name="aspect_ratio" value="16:9" />
+        </div>
+
+        <div class="control-block">
+          <label>Resolution</label>
+          <div id="resolutionButtons" class="button-row">
+            <button type="button" class="choice" data-value="1K">1K</button>
+            <button type="button" class="choice active" data-value="2K">2K</button>
+            <button type="button" class="choice" data-value="4K">4K</button>
+          </div>
+          <input type="hidden" id="imageResolution" name="resolution" value="2K" />
+        </div>
+
+        <div class="control-block">
+          <label>Output format</label>
+          <div class="button-row">
+            <button type="button" class="choice active">JPG</button>
+          </div>
+          <div class="small" style="margin-top:7px">The generated image is converted to JPG in your browser when downloaded.</div>
+        </div>
+
+        <button id="imageGenerate" class="primary" type="submit">Generate Image</button>
+      </form>
+
+      <div id="imageStatus" class="status">
+        <strong id="imageStatusText">Preparing...</strong>
+        <div id="imageDetail" class="small" style="margin-top:6px"></div>
+        <div id="imageError" class="error"></div>
+      </div>
+      <div id="imageResult"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+  document.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+      document.querySelectorAll(".panel").forEach(x => x.classList.remove("active"));
+      tab.classList.add("active");
+      document.getElementById(tab.dataset.tab).classList.add("active");
+    });
+  });
+
+  fetch("/api/config").then(r => r.json()).then(c => {
+    if (c.defaultVideoModel) document.getElementById("videoModel").value = c.defaultVideoModel;
+  }).catch(() => {});
+
+  const videoForm = document.getElementById("videoForm");
+  const videoButton = document.getElementById("videoGenerate");
+  const videoStatus = document.getElementById("videoStatus");
+  const videoStatusText = document.getElementById("videoStatusText");
+  const videoDetail = document.getElementById("videoDetail");
+  const videoError = document.getElementById("videoError");
+  const videoResult = document.getElementById("videoResult");
+
+  function showVideoStatus(text, detail="") {
+    videoStatus.classList.add("show");
+    videoStatusText.textContent = text;
+    videoDetail.textContent = detail;
+    videoError.textContent = "";
+  }
+
+  async function pollVideo(id) {
+    while (true) {
+      const r = await fetch(`/api/status/${encodeURIComponent(id)}`);
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || JSON.stringify(data));
+
+      const progress = typeof data.progress === "number" ? ` · ${Math.round(data.progress * 100)}%` : "";
+      showVideoStatus(`Status: ${data.status || "unknown"}${progress}`, `Job ID: ${id}`);
+
+      if (data.status === "succeeded") return data;
+      if (["failed","canceled","expired"].includes(data.status)) {
+        throw new Error(data.error?.message || `Generation ${data.status}.`);
+      }
+      await new Promise(resolve => setTimeout(resolve, 4000));
+    }
+  }
+
+  videoForm.addEventListener("submit", async e => {
+    e.preventDefault();
+    videoButton.disabled = true;
+    videoResult.innerHTML = "";
+    showVideoStatus("Submitting generation...");
+
+    try {
+      const fd = new FormData(videoForm);
+      const r = await fetch("/api/generate", { method:"POST", body:fd });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || JSON.stringify(data));
+      if (!data.id) throw new Error("Surplus did not return a job ID.");
+
+      const finished = await pollVideo(data.id);
+      const artifact = finished.results?.[0];
+      const src = artifact?.url || artifact?.download_url;
+      if (!src) throw new Error("Generation succeeded but no video artifact was returned.");
+
+      videoResult.innerHTML = `
+        <video class="video-preview" controls autoplay playsinline src="${src}"></video>
+        <div class="actions"><a href="${src}" target="_blank" rel="noopener">Open / Download Video</a></div>
+      `;
+      showVideoStatus("Completed", `Job ID: ${data.id}`);
+    } catch (err) {
+      videoStatus.classList.add("show");
+      videoStatusText.textContent = "Generation failed";
+      videoError.textContent = err.message || String(err);
+    } finally {
+      videoButton.disabled = false;
+    }
+  });
+
+  const imageForm = document.getElementById("imageForm");
+  const referenceInput = document.getElementById("referenceInput");
+  const referencePreview = document.getElementById("referencePreview");
+  const imageButton = document.getElementById("imageGenerate");
+  const imageStatus = document.getElementById("imageStatus");
+  const imageStatusText = document.getElementById("imageStatusText");
+  const imageDetail = document.getElementById("imageDetail");
+  const imageError = document.getElementById("imageError");
+  const imageResult = document.getElementById("imageResult");
+  const modelNote = document.getElementById("modelNote");
+  let referenceFiles = [];
+
+  fetch("/api/image-models").then(r => r.json()).then(data => {
+    if (data.error) throw new Error(data.error);
+    const pro = data.families?.["nano-banana-pro"] || [];
+    const nb2 = data.families?.["nano-banana-2"] || [];
+    modelNote.textContent = `Live Surplus catalog: Nano Banana Pro (${pro.length}), Nano Banana 2 (${nb2.length}).`;
+  }).catch(() => {
+    modelNote.textContent = "The server will resolve the current live Surplus model ID when you generate.";
+  });
+
+  function renderReferences() {
+    referencePreview.innerHTML = "";
+    referenceFiles.forEach((file,index) => {
+      const box = document.createElement("div");
+      box.className = "thumb";
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(file);
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.textContent = "×";
+      remove.title = "Remove";
+      remove.addEventListener("click", () => {
+        referenceFiles.splice(index,1);
+        renderReferences();
+      });
+      box.append(img,remove);
+      referencePreview.appendChild(box);
+    });
+  }
+
+  referenceInput.addEventListener("change", () => {
+    const incoming = Array.from(referenceInput.files || []);
+    referenceFiles = [...referenceFiles, ...incoming].slice(0,8);
+    referenceInput.value = "";
+    renderReferences();
+  });
+
+  function wireChoices(containerId, hiddenId) {
+    const container = document.getElementById(containerId);
+    const hidden = document.getElementById(hiddenId);
+    container.querySelectorAll(".choice").forEach(btn => {
+      btn.addEventListener("click", () => {
+        container.querySelectorAll(".choice").forEach(x => x.classList.remove("active"));
+        btn.classList.add("active");
+        hidden.value = btn.dataset.value;
+      });
+    });
+  }
+
+  wireChoices("aspectButtons","imageAspect");
+  wireChoices("resolutionButtons","imageResolution");
+
+  function imageDataUrl(item) {
+    if (item?.b64_json) return `data:${item.mime_type || "image/png"};base64,${item.b64_json}`;
+    if (item?.url) return item.url;
+    return null;
+  }
+
+  async function toJpegBlob(src) {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    await new Promise((resolve,reject) => {
+      img.onload = resolve;
+      img.onerror = () => reject(new Error("Could not load generated image for JPG conversion."));
+      img.src = src;
+    });
+
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img,0,0);
+
+    return await new Promise((resolve,reject) => {
+      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("JPG conversion failed.")), "image/jpeg", 0.95);
+    });
+  }
+
+  imageForm.addEventListener("submit", async e => {
+    e.preventDefault();
+    imageButton.disabled = true;
+    imageResult.innerHTML = "";
+    imageStatus.classList.add("show");
+    imageStatusText.textContent = "Generating image...";
+    imageDetail.textContent = referenceFiles.length ? `Using ${referenceFiles.length} reference image${referenceFiles.length===1?"":"s"}` : "Prompt-only generation";
+    imageError.textContent = "";
+
+    try {
+      const fd = new FormData();
+      fd.append("model_family", document.getElementById("imageModelFamily").value);
+      fd.append("prompt", document.getElementById("imagePrompt").value);
+      fd.append("aspect_ratio", document.getElementById("imageAspect").value);
+      fd.append("resolution", document.getElementById("imageResolution").value);
+      referenceFiles.forEach(file => fd.append("images", file));
+
+      const r = await fetch("/api/generate-image", { method:"POST", body:fd });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || JSON.stringify(data));
+
+      const item = data.data?.[0];
+      const src = imageDataUrl(item);
+      if (!src) throw new Error("Surplus returned no image.");
+
+      const img = document.createElement("img");
+      img.className = "result-image";
+      img.src = src;
+
+      const actions = document.createElement("div");
+      actions.className = "actions";
+
+      const download = document.createElement("button");
+      download.type = "button";
+      download.textContent = "Download JPG";
+      download.addEventListener("click", async () => {
+        try {
+          download.disabled = true;
+          download.textContent = "Preparing JPG...";
+          const blob = await toJpegBlob(src);
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "thumbnail.jpg";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 2000);
+        } catch (err) {
+          alert(err.message || String(err));
+        } finally {
+          download.disabled = false;
+          download.textContent = "Download JPG";
+        }
+      });
+
+      actions.appendChild(download);
+      imageResult.append(img,actions);
+      imageStatusText.textContent = "Completed";
+      imageDetail.textContent = `Model used: ${data.model} · References: ${data.usedReferences}`;
+    } catch (err) {
+      imageStatusText.textContent = "Generation failed";
+      imageError.textContent = err.message || String(err);
+    } finally {
+      imageButton.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
