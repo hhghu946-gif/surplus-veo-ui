@@ -23,7 +23,27 @@ function requireKey(res) {
 
 async function surplus(path, options = {}) {
   const headers = { Authorization: `Bearer ${process.env.SURPLUS_API_KEY}`, ...(options.headers || {}) };
-  const response = await fetch(`${API_URL}${path}`, { ...options, headers });
+  let response;
+
+try {
+  response = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers,
+    signal: AbortSignal.timeout(180000)
+  });
+} catch (err) {
+  console.error("SURPLUS FETCH ERROR:", err);
+  console.error("CAUSE:", err?.cause);
+
+  throw new Error(
+    `Surplus connection failed: ${
+      err?.cause?.message ||
+      err?.cause?.code ||
+      err?.message ||
+      "unknown network error"
+    }`
+  );
+}
   const text = await response.text();
   let data;
   try { data = text ? JSON.parse(text) : {}; } catch { data = { raw: text }; }
