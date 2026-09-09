@@ -57,8 +57,6 @@ app.post("/api/generate", upload.single("image"), async (req, res) => {
 
     const prompt = String(req.body.prompt || "").trim();
     const model = String(req.body.model || DEFAULT_MODEL).trim();
-    const duration = Number(req.body.duration || 8);
-    const resolution = String(req.body.resolution || "1080p").trim();
     const aspectRatio = String(req.body.aspect_ratio || "16:9").trim();
     const audio = String(req.body.audio || "false") === "true";
 
@@ -74,8 +72,6 @@ app.post("/api/generate", upload.single("image"), async (req, res) => {
       model,
       prompt,
       image_url: dataUrl,
-      duration_seconds: duration,
-      resolution,
       aspect_ratio: aspectRatio,
       audio
     };
