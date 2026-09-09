@@ -166,7 +166,6 @@ app.post("/api/generate-image", imageUpload.array("images", 8), async (req, res)
       model: chosen.id,
       prompt,
       resolution,
-      size: sizeFor(aspectRatio, resolution),
       response_format: "b64_json"
     };
 
