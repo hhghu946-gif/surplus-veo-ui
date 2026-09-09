@@ -8,9 +8,11 @@ const API_URL = (process.env.SURPLUS_API_URL || "https://api.surplusintelligence
 const DEFAULT_VIDEO_MODEL = process.env.SURPLUS_VIDEO_MODEL || "veo3-fast-image-to-video";
 
 const IMAGE_MODELS = {
-  "nano-banana-2-edit": { label: "Nano Banana 2 Edit", endpoint: "/v1/images/edits", requiresReference: true },
-  "nano-banana-pro-edit": { label: "Nano Banana Pro Edit", endpoint: "/v1/images/edits", requiresReference: true },
-  "gpt-5.4-image-2": { label: "GPT-5 Image", endpoint: "/v1/images/generations", requiresReference: false }
+  "nano-banana-pro-edit": {
+    label: "Nano Banana Pro Edit",
+    endpoint: "/v1/images/edits",
+    requiresReference: true
+  }
 };
 
 const videoUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 8 * 1024 * 1024 } });
@@ -115,7 +117,7 @@ app.post("/api/generate-image", imageUpload.array("images", 8), async (req, res)
     if (!requireKey(res)) return;
 
     const prompt = String(req.body.prompt || "").trim();
-    const model = String(req.body.model || "").trim();
+    const model = "nano-banana-pro-edit";
     const resolution = String(req.body.resolution || "2K").toUpperCase();
     const aspectRatio = String(req.body.aspect_ratio || "16:9").trim();
     const files = Array.isArray(req.files) ? req.files : [];
