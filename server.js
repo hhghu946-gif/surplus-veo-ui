@@ -137,13 +137,22 @@ app.post("/api/generate-image", imageUpload.array("images", 8), async (req, res)
       return res.status(413).json({ error: "Combined reference images are too large. Keep their total under about 7 MB." });
     }
 
-    const body = {
-      model,
-      prompt,
-      resolution,
-      size: sizeFor(aspectRatio, resolution),
-      response_format: "b64_json"
-    };
+   let body;
+
+if (model === "gpt-5-image") {
+  body = {
+    model,
+    prompt,
+    response_format: "b64_json"
+  };
+} else {
+  body = {
+    model,
+    prompt,
+    resolution,
+    response_format: "b64_json"
+  };
+}
 
     if (files.length === 1) {
       body.image = dataUri(files[0]);
