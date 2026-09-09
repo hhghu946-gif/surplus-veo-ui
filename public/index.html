@@ -38,7 +38,7 @@
 <select id="imageModel">
 <option value="nano-banana-2-edit" selected>Nano Banana 2 Edit</option>
 <option value="nano-banana-pro-edit">Nano Banana Pro Edit</option>
-<option value="gpt-5-image">GPT-5 Image</option>
+<option value="gpt-5.4-image-2">GPT-5.4 Image 2</option>
 </select>
 
 <div class="control">
@@ -107,7 +107,7 @@ const imageModelSelect = document.getElementById("imageModel");
 const resolutionControl = document.getElementById("resolutionControl");
 
 function updateModelControls(){
-  const isGpt5 = imageModelSelect.value === "gpt-5-image";
+  const isGpt5 = imageModelSelect.value === "gpt-5.4-image-2";
   resolutionControl.style.display = isGpt5 ? "none" : "block";
 }
 
@@ -129,7 +129,7 @@ const b=document.getElementById("imageGenerate"),status=document.getElementById(
 const prompts=[...document.querySelectorAll(".queue-prompt")].map(x=>x.value.trim()).filter(Boolean);
 if(!prompts.length)return;
 const model=document.getElementById("imageModel").value;
-if(model!=="gpt-5-image"&&refs.length===0){status.classList.add("show");st.textContent="Queue not started";err.textContent="Nano Banana Edit requires at least one reference image.";return}
+if(model!=="gpt-5.4-image-2"&&refs.length===0){status.classList.add("show");st.textContent="Queue not started";err.textContent="Nano Banana Edit requires at least one reference image.";return}
 b.disabled=true;results.innerHTML="";status.classList.add("show");st.textContent="Queue running";err.textContent="";
 const cards=prompts.map((p,i)=>{const c=queueCard(p,i);results.append(c);return c});
 let completed=0,failed=0;
@@ -140,7 +140,7 @@ for(let i=0;i<prompts.length;i++){
    const f=new FormData();
    f.append("model",model);
    f.append("prompt",prompts[i]);
-   if(model!=="gpt-5-image"){
+   if(model!=="gpt-5.4-image-2"){
      f.append("resolution",document.getElementById("imageResolution").value);
    }
    f.append("aspect_ratio",document.getElementById("imageAspect").value);
