@@ -137,22 +137,27 @@ app.post("/api/generate-image", imageUpload.array("images", 8), async (req, res)
       return res.status(413).json({ error: "Combined reference images are too large. Keep their total under about 7 MB." });
     }
 
-   let body;
+    let body;
 
-if (model === "gpt-5-image") {
-  body = {
-    model,
-    prompt,
-    response_format: "b64_json"
-  };
-} else {
-  body = {
-    model,
-    prompt,
-    resolution,
-    response_format: "b64_json"
-  };
-}
+    if (model === "gpt-5-image") {
+      // GPT-5 Image on Surplus rejects the `resolution` parameter.
+      // Keep aspect ratio by using size only.
+      body = {
+        model,
+        prompt,
+        size: sizeFor(aspectRatio, "1K"),
+        response_format: "b64_json"
+      };
+    } else {
+      // Nano Banana edit models keep the resolution controls.
+      body = {
+        model,
+        prompt,
+        resolution,
+        size: sizeFor(aspectRatio, resolution),
+        response_format: "b64_json"
+      };
+    }
 
     if (files.length === 1) {
       body.image = dataUri(files[0]);
