@@ -8,9 +8,11 @@ const API_URL = (process.env.SURPLUS_API_URL || "https://api.surplusintelligence
 const DEFAULT_VIDEO_MODEL = process.env.SURPLUS_VIDEO_MODEL || "veo3-fast-image-to-video";
 
 const IMAGE_MODELS = {
-  "nano-banana-2-edit": { label: "Nano Banana 2 Edit", endpoint: "/v1/images/edits", requiresReference: true },
-  "nano-banana-pro-edit": { label: "Nano Banana Pro Edit", endpoint: "/v1/images/edits", requiresReference: true },
-  "gpt-5.4-image-2": { label: "GPT-5 Image", endpoint: "/v1/images/generations", requiresReference: false }
+  "nano-banana-pro-edit": {
+    label: "Nano Banana Pro Edit",
+    endpoint: "/v1/images/generations",
+    requiresReference: true
+  }
 };
 
 const videoUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 8 * 1024 * 1024 } });
@@ -115,7 +117,7 @@ app.post("/api/generate-image", imageUpload.array("images", 8), async (req, res)
     if (!requireKey(res)) return;
 
     const prompt = String(req.body.prompt || "").trim();
-    const model = String(req.body.model || "").trim();
+    const model = "nano-banana-pro-edit";
     const resolution = String(req.body.resolution || "2K").toUpperCase();
     const aspectRatio = String(req.body.aspect_ratio || "16:9").trim();
     const files = Array.isArray(req.files) ? req.files : [];
@@ -137,35 +139,18 @@ app.post("/api/generate-image", imageUpload.array("images", 8), async (req, res)
       return res.status(413).json({ error: "Combined reference images are too large. Keep their total under about 7 MB." });
     }
 
-    let body;
+    const body = {
+      model,
+      prompt,
+      resolution,
+      response_format: "b64_json"
+    };
 
-    if (model === "gpt-5.4-image-2") {
-      // Keep GPT-5.4 Image 2 request minimal.
-      body = {
-        model,
-        prompt
-      };
-    } else {
-      // Nano Banana edit models keep the resolution controls.
-      body = {
-        model,
-        prompt,
-        resolution,
-        size: sizeFor(aspectRatio, resolution),
-        response_format: "b64_json"
-      };
+    if (files.length > 0) {
+      body.input_images = files.map(dataUri);
     }
 
-    if (files.length === 1) {
-      body.image = dataUri(files[0]);
-    } else if (files.length > 1) {
-      body.input_images = files.map((file, index) => ({
-        url: dataUri(file),
-        role: index === 0 ? "start" : "reference"
-      }));
-    }
-
-    const result = await surplus(modelConfig.endpoint, {
+    const result = await surplus("/v1/images/generations", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Idempotency-Key": crypto.randomUUID() },
       body: JSON.stringify(body)
