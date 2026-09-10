@@ -35,8 +35,11 @@
 <section id="imagePanel" class="panel"><div class="card">
 <form id="imageForm">
 <label>Model</label>
-<input value="Nano Banana Pro Edit" disabled>
-<div class="small" style="margin-top:7px">Using nano-banana-pro-edit.</div>
+<select id="imageModel">
+<option value="nano-banana-2-edit" selected>Nano Banana 2 Edit</option>
+<option value="nano-banana-pro-edit">Nano Banana Pro Edit</option>
+<option value="gpt-5.4-image-2">GPT-5.4 Image 2</option>
+</select>
 
 <div class="control">
 <label>Reference images</label>
@@ -100,6 +103,16 @@ ri.onchange=()=>{refs=[...refs,...Array.from(ri.files||[])].slice(0,8);ri.value=
 function wireChoices(container,hidden){document.querySelectorAll(`#${container} .choice`).forEach(b=>b.onclick=()=>{document.querySelectorAll(`#${container} .choice`).forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById(hidden).value=b.dataset.value})}
 wireChoices("resolutionButtons","imageResolution");wireChoices("aspectButtons","imageAspect");
 
+const imageModelSelect = document.getElementById("imageModel");
+const resolutionControl = document.getElementById("resolutionControl");
+
+function updateModelControls(){
+  const isGpt5 = imageModelSelect.value === "gpt-5.4-image-2";
+  resolutionControl.style.display = isGpt5 ? "none" : "block";
+}
+
+imageModelSelect.addEventListener("change", updateModelControls);
+updateModelControls();
 
 let promptCounter=0;
 const promptList=document.getElementById("promptList");
@@ -115,8 +128,8 @@ e.preventDefault();
 const b=document.getElementById("imageGenerate"),status=document.getElementById("imageStatus"),st=document.getElementById("imageStatusText"),detail=document.getElementById("imageDetail"),err=document.getElementById("imageError"),results=document.getElementById("queueResults");
 const prompts=[...document.querySelectorAll(".queue-prompt")].map(x=>x.value.trim()).filter(Boolean);
 if(!prompts.length)return;
-const model="nano-banana-pro-edit";
-if(refs.length===0){status.classList.add("show");st.textContent="Queue not started";err.textContent="Nano Banana Edit requires at least one reference image.";return}
+const model=document.getElementById("imageModel").value;
+if(model!=="gpt-5.4-image-2"&&refs.length===0){status.classList.add("show");st.textContent="Queue not started";err.textContent="Nano Banana Edit requires at least one reference image.";return}
 b.disabled=true;results.innerHTML="";status.classList.add("show");st.textContent="Queue running";err.textContent="";
 const cards=prompts.map((p,i)=>{const c=queueCard(p,i);results.append(c);return c});
 let completed=0,failed=0;
@@ -127,7 +140,9 @@ for(let i=0;i<prompts.length;i++){
    const f=new FormData();
    f.append("model",model);
    f.append("prompt",prompts[i]);
-   f.append("resolution",document.getElementById("imageResolution").value);
+   if(model!=="gpt-5.4-image-2"){
+     f.append("resolution",document.getElementById("imageResolution").value);
+   }
    f.append("aspect_ratio",document.getElementById("imageAspect").value);
    refs.forEach(x=>f.append("images",x));
    const r=await fetch("/api/generate-image",{method:"POST",body:f});const d=await r.json();if(!r.ok)throw Error(d.error||"Image generation failed");const src=srcOf(d.data?.[0]);if(!src)throw Error("Surplus returned no image");
